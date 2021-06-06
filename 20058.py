@@ -49,7 +49,7 @@ def bfs(x, y):
                     visited[cx][cy] = True
                     if maps[cx][cy] > 0:
                         cnt += 1
-                        q.append([cx, cy])
+                        q.append((cx, cy))
     maxIce = max(maxIce, cnt)
 
 
