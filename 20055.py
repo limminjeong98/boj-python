@@ -16,14 +16,14 @@ while True:
     # 내려갈 때는 내구도가 감소하지 않음
     for i in range(n-2, -1, -1):
         if robot[i] == True:
-            if robot[i+1] == False and a[i+1] > 0:
+            if not robot[i+1] and a[i+1] > 0:
                 robot[i] = False
                 robot[i+1] = True
                 a[i+1] -= 1
-    if robot[n-1] == True:
+    if robot[n-1]:
         robot[n-1] = False
         
-    if robot[0] == False and a[0] > 0:
+    if not robot[0] and a[0] > 0:
         robot[0] = True
         a[0] -= 1
     if a.count(0) >= k:
