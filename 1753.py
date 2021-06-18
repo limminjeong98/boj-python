@@ -8,18 +8,18 @@ for i in range(e):
     a, b, c = map(int, input().split())
     maps[a].append((b, c))
 
-h = []
+q = []
 distance[start] = 0
-heapq.heappush(h, (0, start))
+heapq.heappush(q, (0, start))
 
-while h:
-    dist, node = heapq.heappop(h)
+while q:
+    dist, node = heapq.heappop(q)
     if dist > distance[node]:
         continue
     for i in maps[node]:
         if distance[i[0]] > dist + i[1]:
             distance[i[0]] = dist + i[1]
-            heapq.heappush(h, (distance[i[0]], i[0]))
+            heapq.heappush(q, (distance[i[0]], i[0]))
 
 for i in range(1, v+1):
     if distance[i] == INF:
