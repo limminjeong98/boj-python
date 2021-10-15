@@ -1,15 +1,23 @@
+# 16234 인구 이동
 from collections import deque
-n, l, r = map(int, input().split())
-arr = []
+import sys
+input = sys.stdin.readline
+
+n, l, r = map(int, input().rstrip().split())
+
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
+
+arr = []
 for i in range(n):
-    arr.append(list(map(int, input().split())))
+    arr.append(list(map(int, input().rstrip().split())))
+
 def move(x, y, idx):
     united = []
-    ave = 0
+    average = 0
     union[x][y] = idx
     total = arr[x][y]
+    # 새로운 연합을 생성
     united.append((x, y))
     q = deque()
     q.append((x, y))
@@ -23,9 +31,9 @@ def move(x, y, idx):
                     united.append((nx, ny))
                     q.append((nx, ny))
                     total += arr[nx][ny]
-    ave = total // len(united)
+    average = total // len(united)
     for i, j in united:
-        arr[i][j] = ave
+        arr[i][j] = average
                     
 cnt = 0        
 while True:
