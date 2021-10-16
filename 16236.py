@@ -1,11 +1,18 @@
+# 16236 아기상어
 from collections import deque
-n = int(input())
+import sys
+input = sys.stdin.readline
+
+n = int(input().rstrip())
 INF = int(1e9)
+
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
+
 maps = []
 for _ in range(n):
-    maps.append(list(map(int, input().split())))
+    maps.append(list(map(int, input().rstrip().split())))
+
 s_x, s_y = 0, 0
 time = 0
 size = 2
@@ -17,6 +24,7 @@ for i in range(n):
             s_x, s_y = i, j
             maps[i][j] = 0
 
+# 상어가 도달할 수 있는 물고기들의 거리를 구하는 함수
 def bfs():
     dist = [[-1] * n for _ in range(n)]
     dist[s_x][s_y] = 0
@@ -26,11 +34,13 @@ def bfs():
         for i in range(4):
             nx, ny = x + dx[i], y + dy[i]
             if 0 <= nx < n and 0 <= ny < n:
+                # 아직 방문하지 않은 위치이고 상어가 지나갈 수 있는 위치
                 if dist[nx][ny] == -1 and maps[nx][ny] <= size:
                     dist[nx][ny] = dist[x][y] + 1
                     q.append((nx, ny))
     return dist
 
+# 먹을 물고기를 찾는 함수
 def find_fish(dist):
     x, y = 0, 0
     min_dist = INF
@@ -59,4 +69,3 @@ while True:
         if ate >= size:
             size += 1
             ate = 0
-
