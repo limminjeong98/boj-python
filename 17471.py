@@ -1,3 +1,4 @@
+# 17471 게리멘더링
 from collections import deque
 import sys
 input = sys.stdin.readline
@@ -10,8 +11,8 @@ a = [[] for _ in range(n)]
 
 for i in range(n):
     x = list(map(int, input().split()))
-    for j in range(1, x[0]+1):
-        a[i].append(x[j]-1)
+    for j in range(1, x[0] + 1):
+        a[i].append(x[j] - 1)
 
 def bfs(g):
     q = deque()
@@ -46,17 +47,17 @@ def dfs(cnt, x, target):
         ans2 = bfs(g2)
         if not ans2:
             return
-        ans = min(ans, abs(ans1-ans2))
+        ans = min(ans, abs(ans1 - ans2))
         return
 
     for i in range(x, n):
         if visited[i]:
             continue
         visited[i] = 1
-        dfs(cnt+1, i, target)
+        dfs(cnt + 1, i, target)
         visited[i] = 0
 
-for i in range(1, n//2 + 1):
+for i in range(1, n // 2 + 1):
     visited = [0 for _ in range(n)]
     dfs(0, 0, i)
 
