@@ -1,3 +1,4 @@
+# 17281 야구
 n = int(input())
 rst = []
 for _ in range(n):
@@ -31,7 +32,6 @@ def dfs(cnt):
                 idx += 1
                 if idx >= 9:
                     idx -= 9
-                    
         ans = max(ans, score)
         return
     
@@ -40,7 +40,7 @@ def dfs(cnt):
             continue
         visited[i] = 1
         select[i] = cnt
-        dfs(cnt+1)
+        dfs(cnt + 1)
         visited[i] = 0
         select[i] = 0
         
