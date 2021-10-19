@@ -1,3 +1,4 @@
+# 19236 청소년 상어
 from copy import deepcopy
 
 dx = [-1, -1, 0, 1, 1, 1, 0, -1]
@@ -7,7 +8,8 @@ arr = [[None] * 4 for _ in range(4)]
 for i in range(4):
     tmp = list(map(int, input().split()))
     for j in range(4):
-        arr[i][j] = [tmp[2*j], tmp[2*j+1]-1]
+        arr[i][j] = [tmp[2 * j], tmp[2 * j + 1]-1]
+
 ans = 0
 
 def turn_left(direction):
@@ -62,5 +64,3 @@ def dfs(arr, x, y, total):
 
 dfs(arr, 0, 0, 0)
 print(ans)
-
-
