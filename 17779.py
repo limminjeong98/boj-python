@@ -1,74 +1,47 @@
-import sys
-
-input = sys.stdin.readline
-
-def divide(x, y, d1, d2, ans):
-    while True:
-        while True:
-            lx, ly, rx, ry = x + d1, y - d1, x + d2, y + d2
-            if rx == n-1 or ry == n:
-                break
-            bx, by = x + d1 + d2, y - d1 + d2
-            if bx >= n or by >= n or by < 0:
-                break
-            ans = min(ans, find_min(x, y, lx, ly, rx, ry, by))
-            d2 += 1
-        d1 += 1
-        if x + d1 == n-1 or y - d1 == -1:
-            break
-        d2 = 1
-
-    return ans
-
-def find_min(x, y, lx, ly, rx, ry, by):
-    cnt1, cnt2, cnt3, cnt4, d = 0, 0, 0, 0, 0
-    for i in range(lx):
-        for j in range(y+1):
-            if [i, j] == [x + d, y - d]:
-                d += 1
-                break
-            cnt1 += a[i][j]
-
-    d = 1
-    for i in range(rx+1):
-        for j in range(n-1, y, -1):
-            if [i, j] == [x + d, y + d]:
-                d += 1
-                break
-            cnt2 += a[i][j]
-
-    d = 0
-    for i in range(lx, n):
-        for j in range(by):
-            if [i, j] == [lx + d, ly + d]:
-                d += 1
-                break
-            cnt3 += a[i][j]
-
-    d = 1
-    for i in range(rx+1, n):
-        for j in range(n-1, by-1, -1):
-            if [i, j] == [rx + d, ry - d]:
-                d += 1
-                break
-            cnt4 += a[i][j]
-
-    cnt5 = nsum - cnt1 - cnt2 - cnt3 - cnt4
-    max_cnt = max(cnt1, cnt2, cnt3, cnt4, cnt5)
-    min_cnt = min(cnt1, cnt2, cnt3, cnt4, cnt5)
-    return max_cnt - min_cnt
-
+# 17779 게리맨더링 2
 n = int(input())
+s = [[]]
+answer = int(1e9)
+for i in range(n):
+    s.append([0] + list(map(int, input().split())))
 
-a, nsum = [], 0
-for _ in range(n):
-    row = list(map(int, input().split()))
-    nsum += sum(row)
-    a.append(row)
+def find(x, y, d1, d2):
+    district = [0 for _ in range(6)]
+    tmp = [[0] * (n + 1) for _ in range(n + 1)]
+    # 5번 선거구의 경계선
+    for i in range(d1 + 1):
+        tmp[x + i][y - i] = 5
+        tmp[x + d2 + i][y + d2 - i] = 5
+    for i in range(d2 + 1):
+        tmp[x + i][y + i] = 5
+        tmp[x + d1 + i][y - d1 + i] = 5
+    # 경계선과 경계선 안에 포함되어 있는 구역도 5번 선거구
+    for i in range(x + 1, x + d1 + d2):
+        flag = False
+        for j in range(1, n + 1):
+            if tmp[i][j] == 5:
+                flag = not flag
+            if flag:
+                tmp[i][j] = 5
+    for r in range(1, n + 1):
+        for c in range(1, n + 1):
+            if r < x + d1 and c <= y and tmp[r][c] == 0:
+                district[1] += s[r][c]
+            elif r <= x + d2 and y < c and tmp[r][c] == 0:
+                district[2] += s[r][c]
+            elif x + d1 <= r and c < y - d1 + d2 and tmp[r][c] == 0:
+                district[3] += s[r][c]
+            elif x + d2 < r and y - d1 + d2 <= c and tmp[r][c] == 0:
+                district[4] += s[r][c]
+            elif tmp[r][c] == 5:
+                district[5] += s[r][c]
+    return max(district[1:]) - min(district[1:])
 
-ans = sys.maxsize
-for i in range(n-2):
-    for j in range(1, n-1):
-        d1, d2 = 1, 1
-        ans = divide(i, j, d1, d2, ans)
-print(ans)
+
+for x in range(1, n + 1):
+    for y in range(1, n + 1):
+        for d1 in range(1, n + 1):
+            for d2 in range(1, n + 1):
+                if 1 <= x < x + d1 + d2 <= n and 1 <= y - d1 < y < y + d2 <= n:
+                    answer = min(answer, find(x, y, d1, d2))
+print(answer)
