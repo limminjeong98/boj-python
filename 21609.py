@@ -1,116 +1,92 @@
+# 21609 상어중학교
 from collections import deque
+
 n, m = map(int, input().split())
-maps = []
-for _ in range(n):
-    maps.append(list(map(int, input().split())))
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
-ans = 0
+a = [list(map(int, input().split())) for _ in range(n)]
+answer = 0
 
-def bfs(x, y):
-    base_x, base_y = x, y
-    visited = [[False] * n for _ in range(n)]
-    visited[x][y] = True
-    cnt, rainbow = 1, 0
-    q = deque([(x, y)])
-    num = maps[x][y]
+dx = [1, -1, 0, 0]
+dy = [0, 0, 1, -1]
+# dx = [-1, 1, 0, 0]
+# dy = [0, 0, -1, 1]
+
+def bfs(x, y, p):
+    q.append([x, y])
+    tmp = a[x][y]
+    visited[x][y] = p
+    cnt, r = 1, 0
     while q:
-        x, y = q.popleft()
+        x, y = q.pop()
         for i in range(4):
             nx, ny = x + dx[i], y + dy[i]
-            if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny]:
-                visited[nx][ny] = True
-                if maps[nx][ny] == num:
-                    cnt += 1
-                    q.append((nx, ny))
-                    if nx < base_x and ny < base_y:
-                        base_x, base_y = nx, ny
-                elif maps[nx][ny] == 0:
-                    rainbow += 1
-                    cnt += 1
-                    q.append((nx, ny))
-    return cnt, rainbow, base_x, base_y
+            if 0 > nx or nx >= n or 0 > ny or ny >= n:
+                continue
+            if a[nx][ny] == tmp and visited[nx][ny] == 0:
+                visited[nx][ny] = p
+                cnt += 1
+                q.append([nx, ny])
+            elif a[nx][ny] == 0 and p not in visited[nx][ny]:
+                visited[nx][ny].append(p)
+                cnt += 1
+                r += 1
+                q.append([nx, ny])
+    return cnt, r
 
-def find_group():
-    cnt, tmpcnt = 1, 0
-    cx, cy = 0, 0
-    base_x, base_y = -1, -1
-    rainbow, tmprainbow = -1, 0
-    for x in range(n-1, -1, -1):
-        for y in range(n-1, -1, -1):
-            if maps[x][y] > 0:
-                tmpcnt, tmprainbow, tmp_base_x, tmp_base_y = bfs(x, y)
-                if tmpcnt > cnt:
-                    cnt = tmpcnt
-                    cx, cy = x, y
-                    rainbow = tmprainbow
-                    base_x, base_y = tmp_base_x, tmp_base_y
-                elif tmpcnt == cnt:
-                    if tmprainbow > rainbow:
-                        cx, cy = x, y
-                        rainbow = tmprainbow
-                        base_x, base_y = tmp_base_x, tmp_base_y
-                        if tmprainbow == rainbow:
-                            if tmp_base_x > base_x:
-                                cx, cy = x, y
-                                base_x, base_y = tmp_base_x, tmp_base_y
-                            elif tmp_base_x == base_x:
-                                if tmp_base_y > base_y:
-                                    cx, cy = x, y
-                                    base_x, base_y = tmp_base_x, tmp_base_y
-
-
-    if cnt == 1:
-        return None
-    return cnt, cx, cy
-
-def remove_group(cx, cy):
-    q = deque([(cx, cy)])
-    num = maps[cx][cy]
-    maps[cx][cy] = -2
-    visited = [[False] * n for _ in range(n)]
-    visited[cx][cy] = True
-    while q:
-        x, y = q.popleft() 
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
-            if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny]:
-                visited[nx][ny] = True
-                if maps[nx][ny] == 0:
-                    maps[nx][ny] = -2
-                    q.append((nx, ny))
-                elif maps[nx][ny] == num:
-                    maps[nx][ny] = -2
-                    q.append((nx, ny))
-
-def gravity():
-    for j in range(n):
-        for i in range(n-1, -1, -1):
-            if maps[i][j] >= 0:
-                tmp = i
-                for ni in range(i+1, n):
-                    if maps[ni][j] != -2:
-                        break
-                    maps[ni][j] = maps[tmp][j]
-                    maps[tmp][j] = -2
-                    tmp = ni
-
-
-def rotate_left():
-    new_maps = [[0] * n for _ in range(n)]
-    for i in range(n):
-        for j in range(n):
-            new_maps[n-1-j][i] = maps[i][j]                        
-    return new_maps
+def fall(x, y):
+    flag = False
+    for i in range(x + 1, n):
+        nx = i
+        if a[i][y] > -2:
+            flag = True
+            break
+    if flag:
+        a[nx - 1][y] = a[x][y]
+    else:
+        a[nx][y] = a[x][y]
+    a[x][y] = -2
 
 while True:
-    rst = find_group()
-    if rst == None:
+    q = deque()
+    visited = [[0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if a[i][j] == 0:
+                visited[i][j] = []
+    p, b = 1, []
+    for i in range(n):
+        for j in range(n):
+            if a[i][j] > 0 and visited[i][j] == 0:
+                cnt, r = bfs(i, j, p)
+                if cnt > 1:
+                    b.append([cnt, r, i, j, p])
+                p += 1
+    if not b:
         break
-    cnt, cx, cy = rst
-    ans += cnt ** 2
-    remove_group(cx, cy)
-    gravity()
-    maps = rotate_left()
-    gravity()
-print(ans, end='')
+
+    b = sorted(b)
+
+    cnt = 0
+    for i in range(n):
+        for j in range(n):
+            if a[i][j] > 0 and visited[i][j] == b[-1][-1]:
+                a[i][j] = -2
+                cnt += 1
+            elif a[i][j] == 0 and b[-1][-1] in visited[i][j]:
+                a[i][j] = -2
+                cnt += 1
+    answer += cnt ** 2
+
+    for i in range(n - 2, -1, -1):
+        for j in range(n):
+            if a[i][j] >= 0 and a[i + 1][j] == -2:
+                fall(i, j)
+
+    a = list(zip(*a))[::-1]
+    a = [list(s) for s in a]
+
+    for i in range(n - 2, -1, -1):
+        for j in range(n):
+            if a[i][j] >= 0 and a[i + 1][j] == -2:
+                fall(i, j)
+
+print(answer)
