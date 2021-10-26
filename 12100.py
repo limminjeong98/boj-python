@@ -1,4 +1,4 @@
-# 12100. 2048 (Easy)
+# 12100 2048 (Easy)
 from copy import deepcopy
 
 n = int(input())
