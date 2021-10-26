@@ -61,7 +61,7 @@ def mirror(arr, idx):
     return result
 
 
-# 맺 자체를 대칭시켜서 확인
+# 맵 자체를 대칭시켜서 확인
 for r in range(3):
     arr = mirror(arr, r)
     # 맵 자체를 회전시켜서 확인
